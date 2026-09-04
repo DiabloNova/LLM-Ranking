@@ -1,0 +1,11 @@
+--- src/app/actions/citation-intelligence.ts
++++ src/app/actions/citation-intelligence.ts
+@@ -123,7 +123,7 @@
+         activeSources = seedSources;
+       }
+
+-      activeSources = activeSources as CitationSource[];
++      activeSources = activeSources as any as CitationSource[];
+
+       // Reload occurrences to include the freshly seeded ones if applicable
+       const finalOccurrences = await repo.findAllOccurrences(tenantId);

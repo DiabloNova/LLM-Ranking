@@ -1,0 +1,56 @@
+version: 2.1
+
+# CI gate for seorchable.
+#
+# `pnpm` is the authoritative package manager (`pnpm-lock.yaml`); `package-lock.json` was
+# stale and has been removed, so npm can no longer be used by accident.
+#
+# Two earlier defects in this pipeline are fixed here:
+#   1. `pkg-manager-install-command` was set to the corepack bootstrap. That parameter
+#      *replaces* the orb's install command, so dependencies were never actually installed
+#      and every later step ran against an empty `node_modules`. Corepack setup is now its
+#      own step and the install command really installs.
+#   2. Installs were not frozen, so a lockfile/manifest drift could be silently "fixed"
+#      in CI instead of failing. `--frozen-lockfile` makes that drift a hard error.
+#
+# The image is pinned to Node 22.11 because `ai` and `@ai-sdk/google` both declare
+# `engines.node >= 22`, which `package.json` now states explicitly.
+
+orbs:
+  node: circleci/node@5
+
+jobs:
+  build-and-verify:
+    docker:
+      - image: cimg/node:22.11
+    steps:
+      - checkout
+      - run:
+          name: Enable corepack (pnpm, per engines.pnpm in package.json)
+          command: corepack enable
+      - node/install-packages:
+          pkg-manager: pnpm
+          pkg-manager-install-command: "pnpm install --frozen-lockfile"
+      - run:
+          name: Lint (ESLint)
+          command: pnpm lint
+      - run:
+          name: Type-check (tsc --noEmit)
+          command: pnpm typecheck
+      - run:
+          name: Test suites
+          command: pnpm test:all
+      - run:
+          name: Production build
+          command: pnpm build
+      - run:
+          name: Collect build artifacts
+          command: mkdir -p /tmp/artifacts && cp -R .next /tmp/artifacts/next-build 2>/dev/null || true
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: build-output
+
+workflows:
+  ci:
+    jobs:
+      - build-and-verify

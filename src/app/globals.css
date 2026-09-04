@@ -1,0 +1,965 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-persian-primary), sans-serif;
+  --font-display: var(--font-persian-primary), sans-serif;
+
+  --animate-fade-in: fade-in 0.35s ease-out forwards;
+  --animate-slide-up: slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-shimmer: shimmer 1.6s infinite linear;
+  --animate-pulse-glow: pulse-glow 2.8s ease-in-out infinite;
+  --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-aurora: aurora 18s ease-in-out infinite;
+  --animate-border-spin: border-spin 4s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary-600) 30%, transparent); }
+    50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-primary-600) 0%, transparent); }
+  }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
+  @keyframes aurora {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    33% { transform: translate3d(3%, -4%, 0) rotate(4deg); }
+    66% { transform: translate3d(-3%, 3%, 0) rotate(-4deg); }
+  }
+  @keyframes border-spin {
+    from { --border-angle: 0deg; }
+    to { --border-angle: 360deg; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@layer base {
+  /* =========================================================
+     DARK THEME (Default) — deep slate enterprise with Sky Blue/Gray/Orange
+     ========================================================= */
+  :root {
+    /* Primary Palette - Sky Blue, Gray, Orange */
+    --sky-blue-500: #38bdf8;
+    --sky-blue-600: #0ea5e9;
+    --sky-blue-700: #0284c7;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --gray-950: #020617;
+    --orange-400: #fb923c;
+    --orange-500: #f97316;
+    --orange-600: #ea580c;
+
+    /* Brand Mapping for backward compatibility */
+    --color-primary-600: var(--sky-blue-600);
+    --color-primary-700: var(--sky-blue-700);
+    --color-primary-blue: var(--sky-blue-500);
+    --color-accent-600: var(--sky-blue-500);
+
+    /* Warm accent (used for competitor / source highlights) */
+    --color-accent: var(--orange-500);
+    --color-accent-bg: rgba(249, 115, 22, 0.16);
+
+    /* Background with Depth */
+    --background: #0f172a;        /* slate-900 */
+    --background-subtle: #0b1220;
+    --foreground: oklch(97% 0.012 230);        /* slate-50 */
+    --card: #1e293b;              /* slate-800 */
+    --card-foreground: #f8fafc;
+    --sidebar: #1e293b;
+    --header: #1e293b;
+    --border: rgba(148, 163, 184, 0.15); /* slate-800 soft */
+    --border-strong: rgba(148, 163, 184, 0.3); /* slate-700 soft */
+    --muted-surface: #1e293b;
+
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+
+    /* TRUE GLASSMORPHISM */
+    --glass-bg: rgba(15, 23, 42, 0.6); /* semi-transparent dark */
+    --glass-bg-light: rgba(241, 245, 249, 0.7); /* semi-transparent light */
+    --glass-border: rgba(148, 163, 184, 0.2); /* subtle gray border */
+    --glass-border-light: rgba(148, 163, 184, 0.3);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --glass-blur: 12px;
+
+    /* Text Colors */
+    --text-primary: oklch(97% 0.012 230);
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    /* Accents */
+    --accent-primary: var(--sky-blue-500);
+    --accent-secondary: var(--orange-500);
+    --gradient-primary: linear-gradient(135deg, var(--sky-blue-500) 0%, var(--orange-500) 100%);
+    --gradient-sky: linear-gradient(135deg, var(--sky-blue-600) 0%, var(--sky-blue-700) 100%);
+
+    /* Ambient Background Orbs */
+    --orb-1: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+    --orb-2: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.1) 0%, transparent 60%);
+
+    /* Semantic */
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.15);
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    --color-error: #ef4444;
+    --color-error-bg: rgba(239, 68, 68, 0.15);
+    --color-info: #0ea5e9;
+    --color-info-bg: rgba(14, 165, 233, 0.15);
+
+    /* Corners */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* Soft, diffused enterprise shadows */
+    --shadow-flat: none;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: var(--glass-shadow);
+
+    /* Neumorphism */
+    --neu-bg: #1e293b;
+    --neu-light: rgba(51, 65, 85, 0.55);
+    --neu-dark: rgba(2, 6, 23, 0.9);
+
+    /* Motion */
+    --motion-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* .dark is keep compatible with dark defaults */
+  .dark {
+    /* Same as root because Dark Mode is Default */
+  }
+
+  /* =========================================================
+     LIGHT THEME — Fresh & Airy
+     ========================================================= */
+  :root.light {
+    --color-primary-600: var(--sky-blue-600);
+    --color-primary-700: var(--sky-blue-700);
+    --color-primary-blue: var(--sky-blue-600);
+    --color-accent-600: var(--sky-blue-600);
+
+    --color-accent: var(--orange-500);
+    --color-accent-bg: #ffedd5;
+
+    --background: #f8fafc;        /* slate-50 */
+    --background-subtle: #f1f5f9;
+    --foreground: #0f172a;        /* slate-900 */
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --sidebar: #ffffff;
+    --header: #ffffff;
+    --border: rgba(148, 163, 184, 0.2);
+    --border-strong: rgba(148, 163, 184, 0.35);
+    --muted-surface: #f1f5f9;
+
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #fff7ed 100%);
+
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-bg-dark: rgba(241, 245, 249, 0.8);
+    --glass-border: rgba(148, 163, 184, 0.25);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+
+    --orb-1: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+    --orb-2: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.15) 0%, transparent 60%);
+
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+    --shadow-lg: var(--glass-shadow);
+
+    --color-success: #10b981;
+    --color-success-bg: #dcfce7;
+    --color-warning: #f59e0b;
+    --color-warning-bg: #fef3c7;
+    --color-error: #ef4444;
+    --color-error-bg: #fee2e2;
+    --color-info: #0ea5e9;
+    --color-info-bg: #dbeafe;
+
+    --neu-bg: #eef2f7;
+    --neu-light: rgba(255, 255, 255, 0.9);
+    --neu-dark: rgba(148, 163, 184, 0.45);
+
+    /* Deeper gradient in light mode so white button text stays legible */
+    --gradient-primary: linear-gradient(135deg, var(--sky-blue-700) 0%, var(--orange-600) 100%);
+    --gradient-sky: linear-gradient(135deg, var(--sky-blue-700) 0%, var(--sky-blue-600) 100%);
+  }
+
+  /* Premium glassmorphism enhancements for light mode */
+  :root.light .glass-card,
+  :root.light .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 8px 32px 0 rgba(31, 38, 135, 0.1),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+  }
+
+  /* Adjust ambient orbs for light mode */
+  :root.light .ambient-orb {
+    opacity: 0.6;
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-persian-primary), sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--motion-normal), color var(--motion-normal);
+}
+
+:lang(fa) {
+  line-height: 1.85;
+  letter-spacing: 0;
+}
+
+/* One coherent type system: IranYekan / YekanBakh drives body, UI and headings.
+   Strong hierarchy comes from size, weight, spacing and color, not a second font. */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: var(--font-persian-primary), sans-serif;
+  letter-spacing: -0.01em;
+}
+:lang(fa) h1,
+:lang(fa) h2,
+:lang(fa) h3,
+:lang(fa) h4,
+:lang(fa) h5,
+:lang(fa) h6 {
+  letter-spacing: 0;
+}
+
+/* =========================================================
+   ADVANCED DESIGN UTILITIES & GLASSMORPHISM
+   ========================================================= */
+
+/* Animated ambient background orbs */
+.ambient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--bg-gradient);
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: floatOrb 20s infinite ease-in-out;
+  will-change: transform;
+}
+
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  background: var(--orb-1);
+  top: -200px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--orb-2);
+  bottom: -100px;
+  left: -50px;
+  animation-delay: -7s;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 30px) scale(0.9); }
+}
+
+/* Page load animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Utility classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+/* Stagger delays for sequential animations */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Universal smooth transitions */
+a, button, input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover lift effect */
+.glass-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(56, 189, 248, 0.15);
+  border-color: var(--sky-blue-500);
+}
+
+/* Input focus glow */
+input:focus, textarea:focus {
+  border-color: var(--sky-blue-500);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+  outline: none;
+}
+
+/* Glassmorphic surface */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-strong {
+  background: color-mix(in srgb, var(--card) 82%, transparent);
+  backdrop-filter: blur(calc(var(--glass-blur) + 6px)) saturate(160%);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) + 6px)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Neumorphic surface (soft extruded) */
+.neu-surface {
+  background: var(--neu-bg);
+  box-shadow: 6px 6px 16px var(--neu-dark), -6px -6px 16px var(--neu-light);
+  border: 1px solid transparent;
+}
+.neu-inset {
+  background: var(--neu-bg);
+  box-shadow: inset 4px 4px 10px var(--neu-dark), inset -4px -4px 10px var(--neu-light);
+}
+
+/* Animated conic gradient border */
+.animated-border {
+  position: relative;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  z-index: 0;
+}
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    var(--color-primary-600) 20%,
+    var(--color-accent) 40%,
+    transparent 60%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: var(--animate-border-spin);
+  z-index: -1;
+}
+
+/* Static gradient hairline border via mask */
+.gradient-border {
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary-600) 55%, transparent), transparent 45%, color-mix(in srgb, var(--color-accent) 45%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Aurora animated background layer */
+.aurora-bg {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.aurora-bg::before,
+.aurora-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  z-index: -1;
+  will-change: transform;
+}
+.aurora-bg::before {
+  width: 45vw;
+  height: 45vw;
+  top: -12vw;
+  inset-inline-start: -8vw;
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--color-primary-600) 60%, transparent), transparent 70%);
+  animation: var(--animate-aurora);
+}
+.aurora-bg::after {
+  width: 40vw;
+  height: 40vw;
+  bottom: -14vw;
+  inset-inline-end: -6vw;
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--color-accent) 45%, transparent), transparent 70%);
+  animation: var(--animate-aurora);
+  animation-delay: -9s;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(120deg, var(--text-primary), color-mix(in srgb, var(--color-primary-600) 70%, var(--text-primary)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient-brand {
+  background: linear-gradient(120deg, var(--color-primary-600), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Subtle dotted grid backdrop */
+.grid-backdrop {
+  background-image: radial-gradient(color-mix(in srgb, var(--text-muted) 28%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Shimmer skeleton utility */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted-surface) 25%,
+    color-mix(in srgb, var(--muted-surface) 60%, var(--background)) 37%,
+    var(--muted-surface) 63%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Glass variant of the animated conic border (transparent core) */
+.animated-border-glass {
+  position: relative;
+  border-radius: var(--radius-xl);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  z-index: 0;
+  box-shadow: var(--shadow-lg);
+}
+.animated-border-glass::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    var(--color-primary-600) 15%,
+    var(--color-accent) 32%,
+    color-mix(in srgb, var(--color-primary-600) 80%, white) 48%,
+    transparent 62%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: var(--animate-border-spin);
+  z-index: -1;
+}
+
+/* Highly-polished animated feature icon badge */
+.feature-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  background: var(--gradient-primary);
+  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--color-primary-600) 60%, transparent);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 420ms ease;
+  isolation: isolate;
+}
+.feature-icon::before {
+  content: "";
+  position: absolute;
+  inset: -2.5px;
+  border-radius: inherit;
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    color-mix(in srgb, #fff 85%, transparent) 18%,
+    transparent 42%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: var(--animate-border-spin);
+  z-index: -1;
+}
+.feature-icon svg {
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .feature-icon {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 16px 32px -8px color-mix(in srgb, var(--color-primary-600) 72%, transparent);
+}
+.group:hover .feature-icon svg {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+/* Soft lift on hover */
+.hover-lift {
+  transition: transform var(--motion-normal), box-shadow var(--motion-normal), border-color var(--motion-normal);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Monochrome brand-logo mask (tints any SVG with currentColor) */
+.logo-mask {
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Conic glow ring behind hero focal elements */
+.glow-ring {
+  position: relative;
+}
+.glow-ring::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--color-primary-600) 55%, transparent),
+    color-mix(in srgb, var(--color-accent) 45%, transparent),
+    color-mix(in srgb, var(--color-primary-600) 55%, transparent)
+  );
+  filter: blur(60px);
+  opacity: 0.45;
+  border-radius: 9999px;
+  animation: var(--animate-aurora);
+}
+
+/* Infinite marquee for the platform strip */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* =========================================================
+   PREMIUM BRAND EFFECTS
+   ========================================================= */
+
+/* Fluid mesh gradient: multiple restrained color fields drift behind the page
+   without becoming a noisy neon background. */
+.fluid-mesh {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.fluid-mesh::before,
+.fluid-mesh::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.42;
+  will-change: transform;
+}
+.fluid-mesh::before {
+  width: 42vw;
+  height: 42vw;
+  top: -18vw;
+  inset-inline-start: 8vw;
+  background: radial-gradient(circle, color-mix(in srgb, var(--sky-blue-500) 48%, transparent) 0%, transparent 68%);
+  animation: mesh-drift-a 18s ease-in-out infinite;
+}
+.fluid-mesh::after {
+  width: 36vw;
+  height: 36vw;
+  bottom: -14vw;
+  inset-inline-end: 8vw;
+  background: radial-gradient(circle, color-mix(in srgb, var(--orange-500) 36%, transparent) 0%, transparent 68%);
+  animation: mesh-drift-b 22s ease-in-out infinite;
+}
+@keyframes mesh-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(5vw, 3vw, 0) scale(1.12); }
+}
+@keyframes mesh-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-4vw, -2vw, 0) scale(1.08); }
+}
+
+/* More tactile typography: blue and orange are used as deliberate accents,
+   never as an unreadable gradient fill. */
+.hero-title {
+  color: var(--text-primary);
+  text-wrap: balance;
+  text-shadow: 0 10px 34px color-mix(in srgb, var(--sky-blue-500) 12%, transparent);
+}
+.title-accent-blue { color: var(--sky-blue-500); }
+.title-accent-orange { color: var(--orange-500); }
+.header-link {
+  color: color-mix(in srgb, var(--sky-blue-500) 72%, var(--text-primary));
+  text-shadow: 0 0 18px color-mix(in srgb, var(--sky-blue-500) 18%, transparent);
+}
+.header-link:hover,
+.header-link:focus-visible { color: var(--orange-500); }
+
+/* Grain/noise overlay, intentionally subtle so it adds material depth rather
+   than visual clutter. */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='noise'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23noise)' opacity='.7'/></svg>");
+  background-size: 210px 210px;
+}
+
+/* Skeleton shimmer is reserved for loading-shaped surfaces and also gives the
+   static product preview a believable, restrained material highlight. */
+.skeleton-shimmer {
+  background: linear-gradient(110deg, var(--muted-surface) 28%, color-mix(in srgb, var(--sky-blue-500) 18%, var(--muted-surface)) 42%, var(--muted-surface) 56%);
+  background-size: 220% 100%;
+  animation: shimmer 2.2s linear infinite;
+}
+
+/* Small, consistent micro-interaction for links/cards that already expose an
+   interactive affordance. */
+.micro-interaction {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, color 160ms ease;
+}
+.micro-interaction:hover { transform: translateY(-2px); }
+.micro-interaction:active { transform: translateY(0) scale(0.985); }
+
+/* =========================================================
+   MOBILE & ACCESSIBILITY OPTIMIZATIONS
+   ========================================================= */
+
+@media (max-width: 767px) {
+  :root, :root.light {
+    --glass-blur: 8px;
+  }
+  .ambient-orb {
+    filter: blur(50px);
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-orb,
+  .animated-border::before,
+  .animated-border-glass::before,
+  .aurora-bg::before,
+  .aurora-bg::after,
+  .glow-ring::after,
+  .marquee-track,
+  .fluid-mesh::before,
+  .fluid-mesh::after,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-slide-in-right {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
+/* Shared interaction baseline: visible keyboard focus, comfortable touch targets, and no horizontal page drift. */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+:where(a, button, input, select, textarea, summary, [role="button"]):focus-visible {
+  outline: 3px solid var(--sky-blue-500);
+  outline-offset: 3px;
+}
+
+:where(button, [role="button"], a) {
+  min-height: 44px;
+}
+
+@media (max-width: 767px) {
+  .hide-on-mobile { display: none !important; }
+  .mobile-scroll-x {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Content-aware scroll reveals. CSS scroll timelines avoid a permanent
+   JavaScript scroll listener on every page, improving mobile performance. */
+@keyframes section-reveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@supports (animation-timeline: view()) {
+  main section {
+    animation: section-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 26%;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+article p, main p { text-wrap: pretty; }
+
+@media (prefers-reduced-motion: reduce) {
+  main section {
+    animation: none !important;
+  }
+}
+
+/* =========================================================
+   Enterprise typography and contrast foundation
+   Phase 3.3A: one IranYekan system, perceptual OKLCH tokens,
+   accessible marketing headings, and restrained text motion.
+   ========================================================= */
+:root {
+  --surface-page: oklch(16% 0.018 245);
+  --surface-raised: oklch(21% 0.022 245);
+  --surface-inset: oklch(13% 0.016 245);
+  --ink-primary: oklch(96% 0.012 245);
+  --ink-secondary: oklch(82% 0.018 245);
+  --ink-muted: oklch(68% 0.022 245);
+  --line-soft: oklch(100% 0 0 / 0.14);
+  --line-strong: oklch(100% 0 0 / 0.24);
+  --accent-sky: oklch(76% 0.16 220);
+  --accent-orange: oklch(72% 0.17 48);
+  --focus-ring: oklch(84% 0.14 220);
+  --on-accent: oklch(15% 0.02 245);
+}
+
+:root.light {
+  --surface-page: oklch(98% 0.008 245);
+  --surface-raised: oklch(100% 0.004 245);
+  --surface-inset: oklch(94% 0.012 245);
+  --ink-primary: oklch(24% 0.025 245);
+  --ink-secondary: oklch(39% 0.026 245);
+  --ink-muted: oklch(52% 0.024 245);
+  --line-soft: oklch(25% 0.02 245 / 0.14);
+  --line-strong: oklch(25% 0.02 245 / 0.24);
+  --accent-sky: oklch(52% 0.16 220);
+  --accent-orange: oklch(58% 0.17 48);
+  --focus-ring: oklch(48% 0.16 220);
+  --on-accent: oklch(99% 0.004 245);
+}
+
+/* Gradient text was decorative and produced unstable contrast between themes.
+   Preserve the class names used by existing pages, but make the result a single
+   accessible color. Hierarchy now comes from weight, size, and spacing. */
+.text-gradient,
+.text-gradient-brand {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: var(--accent-sky);
+  text-shadow: none;
+}
+
+/* A small, compositor-only entrance treatment for major headings. */
+.headline-reveal {
+  animation: headline-reveal 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes headline-reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Prevent dense dashboard text from becoming illegible in either theme. */
+:where(main, header, footer) {
+  font-family: var(--font-persian-primary), sans-serif;
+  font-optical-sizing: auto;
+}
+
+:where(main, header, footer) :where(p, li, label, input, textarea, select, button) {
+  text-wrap: pretty;
+}
+
+:where(main, header, footer) :where(p, li) {
+  max-width: 75ch;
+}
+
+:where(a, button, input, select, textarea, [role='button']):focus-visible {
+  outline-color: var(--focus-ring);
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headline-reveal { animation: none; }
+}
