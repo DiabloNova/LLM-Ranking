@@ -35,7 +35,7 @@ export default function RegisterPage({ params }: { params: Promise<{ locale: str
 
   useEffect(() => {
     const plan = normalizePlan(new URLSearchParams(window.location.search).get("plan")) || readCheckoutIntent()?.plan;
-    setCheckoutPlan(plan);
+    setCheckoutPlan(plan ?? null);
   }, []);
 
   const strings = {

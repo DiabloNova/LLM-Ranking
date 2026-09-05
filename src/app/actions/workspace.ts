@@ -3,7 +3,7 @@
 import { requireSession, createSession } from "@/services/auth/session";
 import { requireWorkspaceMembership, requireRole } from "@/services/auth/authorization";
 import { TenantContextManager } from "@/core/database/tenant-context";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 import { users, organizations, organizationMembers, organizationInvitations } from "../../../database/schema";
 import { eq, and } from "drizzle-orm";
 import { randomUUID, createHash } from "crypto";
@@ -19,7 +19,7 @@ export async function createWorkspaceAction(name: string) {
   await TenantContextManager.runWithSystemContext(session.user.id, "sys-create-workspace", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     await db.insert(organizations).values({
         id: orgId,
@@ -44,7 +44,7 @@ export async function listWorkspacesAction() {
   return await TenantContextManager.runWithSystemContext(session.user.id, "sys-list-workspaces", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     const records = await db
       .select({
@@ -70,7 +70,7 @@ export async function inviteUserAction(workspaceId: string, email: string, role:
   return await TenantContextManager.runWithTenantContext(workspaceId, session.user.id, "ctx-invite-user", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     // Ensure user doesn't already exist in workspace
     const existing = await db
@@ -110,7 +110,7 @@ export async function acceptInvitationAction(token: string) {
   return await TenantContextManager.runWithSystemContext(session.user.id, "sys-accept-invitation", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     const tokenHash = createHash('sha256').update(token).digest('hex');
 
@@ -161,7 +161,7 @@ export async function removeMemberAction(workspaceId: string, memberId: string) 
   return await TenantContextManager.runWithTenantContext(workspaceId, session.user.id, "ctx-remove-member", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     await db.delete(organizationMembers)
       .where(
@@ -184,7 +184,7 @@ export async function updateMemberRoleAction(workspaceId: string, memberId: stri
   return await TenantContextManager.runWithTenantContext(workspaceId, session.user.id, "ctx-update-role", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     await db.update(organizationMembers)
       .set({ role })
@@ -209,7 +209,7 @@ export async function switchWorkspaceAction(workspaceId: string) {
   const newRole = await TenantContextManager.runWithSystemContext(session.user.id, "sys-switch-workspace", async () => {
     const client = TenantContextManager.getDbClient();
     if (!client) throw new Error("Failed to get DB client in system context");
-    const db = drizzle(client);
+    const db = createDrizzle(client);
 
     const records = await db
       .select({ role: organizationMembers.role })

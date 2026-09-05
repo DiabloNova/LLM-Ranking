@@ -1,0 +1,3 @@
+
+> ai-branding-platform@0.1.0 typecheck /app
+> tsc --noEmit

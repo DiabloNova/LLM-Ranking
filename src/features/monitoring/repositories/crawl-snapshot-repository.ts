@@ -1,5 +1,5 @@
 import { eq, and, desc } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "../../../core/database/drizzle";
 import { TenantContextManager } from "../../../core/database/tenant-context";
 import { crawlSnapshots } from "../../../../database/schema";
 import { CrawlSnapshot, SnapshotPage } from "../domain/entities/crawl-snapshot";
@@ -8,7 +8,9 @@ export class CrawlSnapshotRepository {
   public async create(snapshot: CrawlSnapshot): Promise<CrawlSnapshot> {
     const tenantId = TenantContextManager.getRequiredTenantId();
     const ctx = TenantContextManager.getContext();
-    const db = drizzle(ctx?.dbClient || (global as any).pgClient);
+    const client = ctx?.dbClient || (global as any).pgClient;
+    if (!client) throw new Error("Database client not found in context");
+    const db = createDrizzle(client);
 
     const rows = await db
       .insert(crawlSnapshots)
@@ -52,7 +54,9 @@ export class CrawlSnapshotRepository {
   ): Promise<CrawlSnapshot | null> {
     const tenantId = TenantContextManager.getRequiredTenantId();
     const ctx = TenantContextManager.getContext();
-    const db = drizzle(ctx?.dbClient || (global as any).pgClient);
+    const client = ctx?.dbClient || (global as any).pgClient;
+    if (!client) throw new Error("Database client not found in context");
+    const db = createDrizzle(client);
 
     const rows = await db
       .select()

@@ -1,5 +1,5 @@
 import { eq, and, desc } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "../../../core/database/drizzle";
 import { TenantContextManager } from "../../../core/database/tenant-context";
 import { automatedRecommendations } from "../../../../database/schema";
 import { AutomatedRecommendation } from "../domain/entities/automated-recommendation";
@@ -8,7 +8,9 @@ export class AutomatedRecommendationRepository {
   public async createOrUpdate(rec: Omit<AutomatedRecommendation, "id" | "createdAt" | "updatedAt">): Promise<void> {
     const tenantId = TenantContextManager.getRequiredTenantId();
     const ctx = TenantContextManager.getContext();
-    const db = drizzle(ctx?.dbClient || (global as any).pgClient);
+    const client = ctx?.dbClient || (global as any).pgClient;
+    if (!client) throw new Error("Database client not found in context");
+    const db = createDrizzle(client);
 
     const existing = await db
       .select()
@@ -51,7 +53,9 @@ export class AutomatedRecommendationRepository {
   public async findAllPending(): Promise<AutomatedRecommendation[]> {
     const tenantId = TenantContextManager.getRequiredTenantId();
     const ctx = TenantContextManager.getContext();
-    const db = drizzle(ctx?.dbClient || (global as any).pgClient);
+    const client = ctx?.dbClient || (global as any).pgClient;
+    if (!client) throw new Error("Database client not found in context");
+    const db = createDrizzle(client);
 
     const rows = await db
       .select()
@@ -81,7 +85,9 @@ export class AutomatedRecommendationRepository {
   public async updateStatus(id: string, status: "applied" | "dismissed"): Promise<void> {
     const tenantId = TenantContextManager.getRequiredTenantId();
     const ctx = TenantContextManager.getContext();
-    const db = drizzle(ctx?.dbClient || (global as any).pgClient);
+    const client = ctx?.dbClient || (global as any).pgClient;
+    if (!client) throw new Error("Database client not found in context");
+    const db = createDrizzle(client);
 
     await db
       .update(automatedRecommendations)

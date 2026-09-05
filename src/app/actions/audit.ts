@@ -3,7 +3,7 @@
 import { secureServerAction } from "@/lib/safe-action";
 import { inngest } from "@/lib/inngest/client";
 import { TenantContextManager } from "@/core/database/tenant-context";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 import { audits } from "../../../database/schema";
 import { eq, desc } from "drizzle-orm";
 import { secureServerActionNoInput } from "@/lib/safe-action";
@@ -19,7 +19,7 @@ export const getAuditsListAction = secureServerActionNoInput(
         if (!client) {
           throw new Error("Failed to get DB client in tenant context");
         }
-        const db = drizzle(client);
+        const db = createDrizzle(client);
 
         const auditsList = await db
           .select()
@@ -44,7 +44,7 @@ export const triggerAuditAction = secureServerAction(
         if (!client) {
           throw new Error("Failed to get DB client in tenant context");
         }
-        const db = drizzle(client);
+        const db = createDrizzle(client);
 
         const [insertedAudit] = await db
           .insert(audits)
@@ -87,7 +87,7 @@ export const getAuditAction = secureServerAction(
         if (!client) {
           throw new Error("Failed to get DB client in tenant context");
         }
-        const db = drizzle(client);
+        const db = createDrizzle(client);
 
         const [audit] = await db
           .select()

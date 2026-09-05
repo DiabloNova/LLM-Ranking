@@ -5,12 +5,14 @@ import { z } from "zod";
 import { TenantContextManager } from "@/core/database/tenant-context";
 import { eq, and } from "drizzle-orm";
 import { prompts, brands } from "../../../database/schema";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 
 // 1. دریافت لیست پرسش‌ها بدون نیاز به ورودی (استفاده از secureServerActionNoInput)
 export const getPromptsAction = secureServerActionNoInput(async (ctx) => {
   return TenantContextManager.runWithTenantContext(ctx.workspaceId, ctx.userId, null, async () => {
-    const db = drizzle(TenantContextManager.getDbClient());
+    const client = TenantContextManager.getDbClient();
+    if (!client) throw new Error("Failed to get DB client in tenant context");
+    const db = createDrizzle(client);
 
     const allPrompts = await db
       .select({
@@ -42,7 +44,9 @@ export const addPromptAction = secureServerAction(
     const parsedInput = addPromptSchema.parse(input);
 
     return TenantContextManager.runWithTenantContext(ctx.workspaceId, ctx.userId, null, async () => {
-      const db = drizzle(TenantContextManager.getDbClient());
+      const client = TenantContextManager.getDbClient();
+      if (!client) throw new Error("Failed to get DB client in tenant context");
+      const db = createDrizzle(client);
 
       // یافتن اولین برند برای فضای کاری
       const userBrands = await db
@@ -86,7 +90,9 @@ export const deletePromptAction = secureServerAction(
     const parsedInput = deletePromptSchema.parse(input);
 
     return TenantContextManager.runWithTenantContext(ctx.workspaceId, ctx.userId, null, async () => {
-      const db = drizzle(TenantContextManager.getDbClient());
+      const client = TenantContextManager.getDbClient();
+      if (!client) throw new Error("Failed to get DB client in tenant context");
+      const db = createDrizzle(client);
 
       const [deleted] = await db
         .delete(prompts)
