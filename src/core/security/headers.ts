@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "../../config/site";
 
 /**
  * Centralised security header policy, applied to every response via `next.config.ts`.
