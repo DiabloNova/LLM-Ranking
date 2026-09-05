@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 import { eq } from "drizzle-orm";
 import { inngest } from "../client";
 import { crawlWebsite } from "../../crawler";
@@ -37,7 +37,7 @@ async function patchAudit(
     if (!client) {
       throw new Error("run-audit: database client unavailable in tenant context");
     }
-    const db = drizzle(client);
+    const db = createDrizzle(client);
     await db
       .update(audits)
       .set({ ...patch, updatedAt: new Date() })

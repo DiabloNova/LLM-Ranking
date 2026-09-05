@@ -2,7 +2,7 @@
 
 import { secureServerActionNoInput } from "@/lib/safe-action";
 import { TenantContextManager } from "@/core/database/tenant-context";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 import { audits } from "../../../database/schema/audits";
 import { eq } from "drizzle-orm";
 
@@ -17,7 +17,7 @@ export const getDashboardStatsAction = secureServerActionNoInput(
         if (!client) {
           throw new Error("Failed to get DB client in tenant context");
         }
-        const db = drizzle(client);
+        const db = createDrizzle(client);
 
         const allAudits = await db
           .select()

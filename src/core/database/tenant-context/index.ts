@@ -9,8 +9,10 @@ import { AsyncLocalStorage } from "node:async_hooks";
  * cast at the wrapping site or silently widen back to `any`. Any real `pg.PoolClient`
  * (or the wrapped variant) structurally satisfies this interface.
  */
+import { QueryResult } from "pg";
+
 export interface TenantDbClient {
-  query(sql: string, params?: unknown[]): Promise<{ rows: any[] }>;
+  query<R extends any[] = any[], I extends any[] = any[]>(sql: string, params?: I): Promise<QueryResult<any>>;
   release?: (err?: Error | boolean) => void;
 }
 

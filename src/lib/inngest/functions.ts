@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { createDrizzle } from "@/core/database/drizzle";
 import { inngest } from "./client";
 import { TenantContextManager } from "../../core/database/tenant-context";
 import { RecommendationEngineService } from "../../features/recommendations/services/recommendation-engine-service";
@@ -37,7 +37,7 @@ export const automatedRecommendationsDiagnosis = inngest.createFunction(
       if (!client) {
         throw new Error("automated-recommendations-diagnosis: database client unavailable");
       }
-      const db = drizzle(client);
+      const db = createDrizzle(client);
       const res = await db.execute('SELECT id FROM organizations');
 
       for (const row of res.rows) {

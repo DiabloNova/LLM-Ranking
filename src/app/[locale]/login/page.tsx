@@ -28,7 +28,7 @@ export default function LoginPage({ params }: { params: Promise<{ locale: string
 
   useEffect(() => {
     const plan = normalizePlan(new URLSearchParams(window.location.search).get("plan")) || readCheckoutIntent()?.plan;
-    setCheckoutPlan(plan);
+    setCheckoutPlan(plan ?? null);
   }, []);
 
   // Strings translations
